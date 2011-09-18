@@ -62,6 +62,8 @@ public class CachedUriRequest {
 	private List<NameValuePair> mPostParams;
 	private String mRawEntity;
 	private CacheMode mCacheMode;
+	
+	private Object mTag;
 
 	/** Возможные состояния загрузки */
 	public enum LoadState {
@@ -188,6 +190,21 @@ public class CachedUriRequest {
 				mCallback.onLoadFinished(this);
 			isCallbackDelayed = false;
 		}
+	}
+	
+	/** Для удобства */
+	public void setTag(Object tag) {
+		mTag = tag;
+	}
+	
+	/** Для удобства */
+	public Object getTag() {
+		return mTag;
+	}
+	
+	/** Для удобства */
+	public String getUri() {
+		return mUri;
 	}
 	
 	/**
