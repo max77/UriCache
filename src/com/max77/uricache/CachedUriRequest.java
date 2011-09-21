@@ -67,7 +67,7 @@ public class CachedUriRequest {
 
 	/** Возможные состояния загрузки */
 	public enum LoadState {
-		NEW, LOADING, LOADED;
+		NEW, LOADING, LOADED, CANCELLED;
 	}
 	
 	/** Текущее состояние объекта */
@@ -220,9 +220,17 @@ public class CachedUriRequest {
 		return true;
 	}
 	
-	public void cancel() {
+	public synchronized void cancel() {
+		resetCallback();
+		mLoadState = LoadState.CANCELLED;
+		
 		if(mLoaderTask != null)
 			mLoaderTask.cancel(true);
+	}
+	
+	public synchronized void resetCallback() {
+		mCallback = null;
+		isCallbackDelayed = false;
 	}
 	
     /***************************************************************************/
@@ -387,7 +395,8 @@ public class CachedUriRequest {
 			// Фоновая загрузка и парсинг
 			@Override
 			protected Void doInBackground(Void... params) {
-				executeSync();
+				if(!isCancelled())
+					executeSync();
 				return null;
 			}
 
